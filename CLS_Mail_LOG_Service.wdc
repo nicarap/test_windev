@@ -1,0 +1,240 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : CLS_Mail_LOG_Service
+ major_version : 27
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x1facc2da002f74c8
+ internal_properties : BgAAAAYAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      
+      // ===== CLS_Mail_LOG_Service - Version 1.0 du 11/05/2012 par Maxence CORMIER =====
+      
+      CLS_Mail_LOG_Service est une classe
+      	PROTÉGÉ CONSTANT
+      		GC_sMail_SMTP 		est une chaine
+      		GC_sMail_Exp 		est une chaine
+      		GC_tMail_Dest 		est un tableau <Agrandissement=1> de chaines
+      		GC_eMail_Dest_Nbre 	est un entier
+      		GC_sMail_Objet 		est une chaine
+      		GC_sMail_Body 		est une chaine
+      		GC_sFile_Mask 		est une chaine		
+      		GC_sPath 			est une chaine
+      		GC_sPath_Mask 		est une chaine
+      		GC_sPath_Default 	est une chaine	
+      		GC_bReturn_Error 	est un booléen
+      Fin
+      
+     type : 131072
+  procedures :
+   -
+     name : Constructeur
+     procedure_id : 2282413352731833544
+     type_code : 27
+     code : |1+
+      PROCEDURE Constructeur(sMail_SMTP est une chaine , sMail_Exp est une chaine, tMail_Dest est un tableau <Agrandissement=1> de chaines, eMail_Dest_Nbre est un entier, ...
+      						sMail_Objet est une chaine, vCodeReturn est un variant = __ERROR)
+      
+      :GC_sMail_SMTP 		= sMail_SMTP
+      :GC_sMail_Exp 		= sMail_Exp
+      :GC_tMail_Dest 		= tMail_Dest
+      :GC_eMail_Dest_Nbre = eMail_Dest_Nbre
+      :GC_sMail_Objet 	= sMail_Objet
+      :GC_bReturn_Error 	= Faux
+      
+      vCodeReturn = :Msg_Log("#INITIALISATION")
+      
+      RENVOYER vCodeReturn
+      
+     type : 589824
+   -
+     name : Destructeur
+     procedure_id : 2282413352731899080
+     type_code : 28
+     code : |1+
+      PROCEDURE Destructeur()
+      
+     type : 655360
+   -
+     name : Msg_Log
+     procedure_id : 2282414220315363151
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] Msg_Log ( [<sMsg_Type> est chaîne [, <sMsg> est chaîne]])
+      //
+      // Paramètres :
+      //	sMsg_Type (chaîne - valeur par défaut="#INFO") : <indiquez ici le rôle de sMsg_Type>
+      //	sMsg (chaîne) : <indiquez ici le rôle de sMsg>
+      // Valeur de retour :
+      // 	chaîne :        // 	Aucune
+      //// Exemple :
+      // Indiquez ici un exemple d'utilisation.
+      //
+      Procédure Msg_Log(sMsg_Type est une chaine = "#INFO", sMsg est une chaine = "")
+      
+      sFile_LOG 	est une chaine = ""
+      vCodeReturn est un variant = Null
+      sLine 		est une chaine = ""
+      sText 		est une chaine = ""
+      eCpt 		est un entier = 0
+      eNbre 		est un entier = 0
+      
+      
+      
+      // ---- Écriture dans le fichier LOG ---
+      SI sMsg_Type <> "#INITIALISATION" ALORS
+      	eCpt = 1
+      	sText = ExtraitChaîne(sMsg, eCpt, RC, DepuisDébut)
+      	TANTQUE sText <> EOT
+      		
+      		sLine  = ""
+      		sLine += DateVersChaîne(DateSys(), "JJ/MM/AAAA")
+      		sLine += " "
+      		sLine += HeureVersChaîne(HeureSys(), "HH:MM")
+      		sLine += TAB
+      		SELON sMsg_Type
+      			CAS "#INFO"
+      				sLine += "I"
+      			CAS __ERROR
+      				sLine += "E"
+      			AUTRE CAS
+      				GP_oLog:Msg_Log(__ERROR, "Le type de Message suivant <"+sMsg_Type+"> est Inconnu pour ajouter une ligne dans le corps message de l'e-mail de LOG <"+:GC_sMail_Objet+"> !")
+      				RENVOYER __ERROR
+      		FIN
+      		sLine += TAB
+      		sLine += sText
+      		
+      		// --- Ajout d'une Ligne dans le corps message de l'e-mail de LOG ---
+      		:GC_sMail_Body += sLine+rc
+      		// ---
+      		
+      		eCpt ++
+      		sText = ExtraitChaîne(sMsg, eCpt, RC, DepuisDébut)
+      	FIN
+      FIN
+      
+      
+      RENVOYER "__OK"
+     type : 458752
+   -
+     name : Mail_Push
+     procedure_id : 2282443357374123065
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //Mail_Push ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      //// Exemple :
+      // Indiquez ici un exemple d'utilisation.
+      //
+      PROCEDURE Mail_Push()
+      
+      sEmail_AdresseDestinataire 	est une chaine = ""
+      sChemin_PieceJointe 		est une chaine = ""
+      emEmail 					est un Email
+      esSessionSMTP 				est un EmailSessionSMTP
+      eCpt 						est un entier = 0
+      eNbre 						est un entier = 0
+      
+      
+      eNbre = :GC_eMail_Dest_Nbre
+      POUR eCpt = 1 à eNbre
+      	sEmail_AdresseDestinataire += :GC_tMail_Dest[eCpt]+", "
+      FIN
+      
+      
+      GP_oLog:Msg_Log("#INFO", "L'e-mail  <"+:GC_sMail_Objet+"> à <"+sEmail_AdresseDestinataire+"> est en cours d'envoi ...")
+      
+      // --- Envoi d'un e-mail par le protocole SMTP ---
+      SI sEmail_AdresseDestinataire = "" ALORS
+      	GP_oLog:Msg_Log(__ERROR, "L'e-mail du '"+:GC_sMail_Objet+"' n'a pas de DESTINATAIRE : <"+sEmail_AdresseDestinataire+">.")
+      	RETOUR
+      FIN
+      
+      // --- Procédure permettant d'initialiser la structure de l'e-mail ---
+      emEmail.Expediteur 				= :GC_sMail_Exp
+      eNbre = :GC_eMail_Dest_Nbre
+      POUR eCpt = 1 A eNbre
+      	Ajoute(emEmail.Destinataire, :GC_tMail_Dest[eCpt])
+      FIN
+      SI :GC_bReturn_Error = faux ALORS emEmail.Sujet = :GC_sMail_Objet+" "+DateVersChaîne(DateSys(), "JJ/MM/AAAA")
+      SI :GC_bReturn_Error = Vrai ALORS emEmail.Sujet = "ALERTE - "+:GC_sMail_Objet+" "+DateVersChaîne(DateSys(), "JJ/MM/AAAA")+" !!!"
+      emEmail.Message 				= :GC_sMail_Body
+      // Ajout de la pièce jointe.
+      //sChemin_PieceJointe 			= ComplèteRep(GP_sRepTemp)+GP_sModule_1_Fic_PieceJointe // "\\iseries1\cge\sms\fsms*.csv"
+      //SI fFichierExiste(sChemin_PieceJointe) = Faux ALORS
+      //	GP_oLog:Msg_Log(__ERROR, "ERREUR - Annulation automatique de l'Envoi de l'e-mail, le fichier  <"+sChemin_PieceJointe+"> qui doit être en pièce jointe n'existe pas !")
+      //	Multitâche(-10)
+      //	RETOUR
+      //FIN
+      //EmailChargeFichierAttaché(emEmail, sChemin_PieceJointe)
+      
+      // --- Gestion SMTP ---
+      esSessionSMTP.AdresseServeur = :GC_sMail_SMTP
+      SI EmailOuvreSession(esSessionSMTP) = Vrai ALORS
+      	// --- Envoie de l'e-mail ---
+      	SI PAS EmailEnvoieMessage(esSessionSMTP,emEmail) ALORS
+      		GP_oLog:Msg_Log(__ERROR, "ERREUR - Lors de l'envoi de l'e-mail <"+:GC_sMail_Objet+"> à <"+sEmail_AdresseDestinataire+"> : "+ErreurInfo(errMessage))
+      		Multitâche(-10)
+      		RETOUR
+      	FIN
+      	
+      	// --- Fermeture de la session SMTP ---
+      	EmailFermeSession(esSessionSMTP)
+      SINON
+      	GP_oLog:Msg_Log(__ERROR, "ERREUR - Impossible d'établir la connexion SMTP. Lors de l'envoi de l'e-mail <"+:GC_sMail_Objet+"> à <"+sEmail_AdresseDestinataire+"> : "+ErreurInfo(errMessage))
+      	RETOUR
+      FIN
+      
+      GP_oLog:Msg_Log("#INFO", "Envoi de l'Email <"+:GC_sMail_Objet+"> à <"+sEmail_AdresseDestinataire+"> ... REUSSI.")
+      
+     type : 458752
+   -
+     name : Return_Error
+     procedure_id : 2286904896383780690
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] Return_Error ( [<bReturn_Error> est booléen])
+      //
+      // Paramètres :
+      //	bReturn_Error (booléen - valeur par défaut=1) : <indiquez ici le rôle de bReturn_Error>
+      // Valeur de retour :
+      // 	booléen : // 	Aucune
+      //// Exemple :
+      // Indiquez ici un exemple d'utilisation.
+      //
+      PROCEDURE Return_Error(vReturn_Error est un variant = "#AUCUN")
+      
+      SI vReturn_Error = Faux OU vReturn_Error = Vrai ALORS :GC_bReturn_Error = vReturn_Error
+      
+      RENVOYER :GC_bReturn_Error
+      
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : BgAAAAYAAAA6ih3UbgNXHwTtiPSFUEj+2fi/m7v4QV2rqidAupM=
+  original_name : CClasse1
+resources :
+ string_res :
+  identifier : 0x1facc2cc002c3bed
+  internal_properties : BgAAAAYAAAAnMYFQ1bL/vz9ehh7L22SNNSlIzGTOI8h5F/WtgDNP
+custom_note :
+ internal_properties : BgAAAAYAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

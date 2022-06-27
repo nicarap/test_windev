@@ -1,0 +1,448 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : COL_ProcéduresGlobales
+ major_version : 27
+ minor_version : 0
+ type : 7
+ description : ""
+ subtype : 0
+procedure_set :
+ identifier : 0x12b055ed001dedf6
+ internal_properties : BgAAAAYAAABGLu41kG7fjQV3iS4F72qmnKaNh5694reolNKIW0iw
+ code_elements :
+  type_code : 31
+  p_codes : []
+  procedures :
+   -
+     name : File_INI_Local
+     procedure_id : 1346670889535430774
+     type_code : 15
+     code : |1+
+      PROCEDURE File_INI_Local()
+      sFicIni_Path 		est une chaine = ""
+      sFicIni_Name 		est une chaîne = ""
+      sIni_Section 		est une chaîne = ""
+      sIni_MotClef 		est une chaîne = ""
+      vIni_ResultDefault 	est un variant = Null
+      vIni_Result 		est un variant = Null
+      iNENEIni_Cpt_1 		est un entier = 0
+      iEIni_LimitMax 		est un entier = 0
+      
+      
+      // -------------------------- Lecture du fichier INI ---------------------------------
+      sFicIni_Path = GP_sIni_Local_Path
+      sFicIni_Name = GP_sIni_Local_File
+      
+      GP_sIni_Local_Return = fFichierExiste(sFicIni_Path+sFicIni_Name)
+      Si GP_sIni_Local_Return = Faux ALORS
+      	ServiceEcritEvénementJournal("Le fichier INI n'existe pas :"+RC+"<"+sFicIni_Path+sFicIni_Name+"> !!!", ejErreur)
+      	RENVOYER __ERROR
+      FIN
+      
+      
+      // ----- [GENERAL] -----
+      
+      // Chemin des fichiers LOG.
+      IF File_INI_Extract_KeyWord("LOG", "LOG_DIR", "GP_sIni_Local_Return") = __ERROR ALORS RENVOYER __ERROR
+      SI GP_sIni_Local_Return[[1]] = "." ALORS
+      	GP_sLog_Rep = ComplèteRep(GP_sProg_Rep)+GP_sIni_Local_Return[[3 À ]]
+      SINON
+      	GP_sLog_Rep = GP_sIni_Local_Return
+      FIN
+      GP_bLog 	= Vrai
+      
+      // Temps (en minutes) de temporisation entre chaque envoi de mail à Maxence
+      IF File_INI_Extract_KeyWord("TIMEOUT", "EMAIL_TIMEOUT_TO_MINUTES", "GP_iTimeout_Sending_Mail") = __ERROR ALORS RENVOYER __ERROR
+      
+      // Temps (en minutes) de temporisation entre chaque Ping du serveur IMPORT_DIR
+      IF File_INI_Extract_KeyWord("TIMEOUT", "PING_TIMEOUT_TO_MINUTES", "GP_iTimeout_Ping") = __ERROR ALORS RENVOYER __ERROR
+      
+      // Temps (en MilliSeconde) de temporisation entre chaque "Boucle".
+      IF File_INI_Extract_KeyWord("TIMEOUT", "SCAN_TIMEOUT", "GP_eScanTimeSleep") = __ERROR ALORS RENVOYER __ERROR
+      
+      // Dossier où se trouve les tickets à imprimer.
+      IF File_INI_Extract_KeyWord("GENERAL", "IMPORT_DIR", "GP_sImport_Dir") = __ERROR ALORS RENVOYER __ERROR
+      
+      // Dossier où se trouve les tickets à imprimer.
+      IF File_INI_Extract_KeyWord("GENERAL", "ERRORS_DIR", "GP_sError_Dir") = __ERROR ALORS RENVOYER __ERROR
+      
+      // Adresse ou Nom du Serveur SMTP pour l'envoi des E-Mails .
+      IF File_INI_Extract_KeyWord("MAIL", "MAIL_SMTP", "GP_sMail_SMTP") = __ERROR ALORS RENVOYER __ERROR
+      
+      // Adresse Expéditeur pour l'envoi des E-Mails .
+      IF File_INI_Extract_KeyWord("MAIL", "MAIL_SRC", "GP_sMail_Exp") = __ERROR ALORS RENVOYER __ERROR
+      
+      // Objet du Mail pour l'envoi des E-Mails .
+      IF File_INI_Extract_KeyWord("MAIL", "MAIL_OBJECT", "GP_sMail_Objet_Defaut") = __ERROR ALORS RENVOYER __ERROR
+      
+      // Nombre d'Adresse Destinataire pour l'envoi des E-Mails .
+      IF File_INI_Extract_KeyWord("MAIL", "MAIL_DEST", "GP_sIni_Local_Return") = __ERROR ALORS RENVOYER __ERROR
+      SI Contient(GP_sIni_Local_Return,";") ALORS
+      	GP_tMail_Dest = ChaîneDécoupe(GP_sIni_Local_Return, ";")
+      SINON
+      	GP_tMail_Dest[1] = GP_sIni_Local_Return
+      FIN
+      
+      RENVOYER __OK
+     type : 458752
+   -
+     name : File_LOG_Ini_Defaut
+     procedure_id : 1346670893830529549
+     type_code : 15
+     code : |1+
+      PROCEDURE File_LOG_Ini_Defaut(LOCAL sMessage est une chaine = "")
+      
+      vCodeReturn est un variant = __OK
+      
+      
+      // --- Initialisation du fichier LOG ---
+      SI fRepCrée(GP_sLog_Rep) = Faux ALORS  GP_sLog_Rep = GP_sProg_Rep
+      GP_sLog_Fic = GP_sProg_Nom+"_"+"<AAAAMMJJ>"+".log"
+      GP_oLog = allouer un objet CLS_Fichier_LOG_Service(GP_sLog_Fic, ...
+      												   ComplèteRep(GP_sLog_Rep), ...
+      												   "#DEFAULT", ...
+      												   "", ...
+      												   vCodeReturn)
+      SI vCodeReturn = __ERROR ALORS RENVOYER __ERROR
+      
+      SI sMessage <> "" ALORS vCodeReturn = GP_oLog:Msg_Log("#INFO", sMessage)
+      
+      RENVOYER vCodeReturn
+     type : 458752
+   -
+     name : Msg_Alert
+     procedure_id : 1346671044154485991
+     type_code : 15
+     code : |1+
+      PROCEDURE Msg_Alert(LOCAL sCode est une chaine, LOCAL sMessage est une chaine)
+      
+      // "M+*" : écrit uniquement le Message dans l'email.
+      // "A+*" : écrit le Message + la ligne Attention dans l'email.
+      
+      SI sMessage <> "#AUCUN" ALORS
+      	GP_oLog:Msg_Log(__ERROR, sMessage)				
+      	GP_oMail:Msg_Log(__ERROR, sMessage)
+      	SI sCode[[1]] = "A" ALORS 
+      		GP_oMail:Msg_Log(__ERROR, "")
+      		GP_oMail:Msg_Log(__ERROR, "ATTENTION - Après cet erreur le Service s'est arrêté et est dans l'attente d'une intervention manuelle !!!")
+      	FIN
+      	GP_oMail:Return_Error(Vrai)
+      FIN
+      
+      // "*+M" : enregistre la totalité de l'email mais ne l'envoie pas.
+      // "*+P" : Envoie l'email. 
+      SI sCode[[3]] = "P" ALORS 
+      	GP_oMail:Return_Error(Vrai)
+      	GP_oMail:Mail_Push()
+      	Liberer GP_oMail
+      FIN
+      
+      RENVOYER __OK
+     type : 458752
+   -
+     name : TaskScheduleLoad
+     procedure_id : 1346671048449650755
+     type_code : 15
+     code : |1+
+      Procédure TaskScheduleLoad(LOCAL sXmlFicNom est une chaine)//, uTaskParam, sTagListFicName est une chaine = tab)
+      
+      sSourceXML 			est une chaine = ""
+      eCpt_TaskSchedule	est un entier = 1
+      eCpt_Period			est un entier = 1
+      eCpt_Day			est un entier = 1
+      eCpt_Beginning		est un entier = 1
+      eCpt_End			est un entier = 1
+      sExtractAuthorize 	est une chaine = ""
+      sExtractProhibited 	est une chaine = ""
+      sExtractDay 		est une chaine = ""
+      sExtractBeginning	est une chaine = ""
+      sExtractEnd			est une chaine = ""
+      
+      
+      sSourceXML =  fChargeTexte(sXmlFicNom)
+      
+      Si sSourceXML = "" ALORS
+      	GP_oLog:Msg_Log(__ERROR, "Le contenu du fichier XML : <"+sXmlFicNom+"> n'a pas pu être récupéré.")
+      	RENVOYER Faux
+      SINON
+      	// --- Chargement des jours et des périodes d'heure où le scannage du répertoire est AUTORISE ---
+      	sExtractAuthorize = XMLExtraitChaîne(sSourceXML, "AUTHORIZE", 1)
+      	SI sExtractAuthorize <> ""
+      		eCpt_Day = 1
+      		sExtractDay = XMLExtraitChaîne(sExtractAuthorize, "DAY", eCpt_Day)
+      		TANTQUE sExtractDay <> ""
+      			// Mémorisation du type d'Ordre sur la planification.
+      			GP_tTaskSchedule[eCpt_TaskSchedule]:sOrder = "AUTHORIZE"
+      			// Récupération du jour de la semaine.
+      			GP_tTaskSchedule[eCpt_TaskSchedule]:sDayName = XMLExtraitChaîne(sExtractDay, "NAME", 1)
+      			eCpt_Period 	= 1
+      			eCpt_Beginning 	= 1
+      			// Récupération des différents 'Début' de période d'heure.
+      			sExtractBeginning = XMLExtraitChaîne(sExtractDay, "BEGINNING", eCpt_Beginning)
+      			TANTQUE sExtractBeginning <> ""
+      				GP_tTaskSchedule[eCpt_TaskSchedule]:tBeginning[eCpt_Period] = sExtractBeginning
+      				eCpt_Period 	++
+      				eCpt_Beginning 	++
+      				sExtractBeginning = XMLExtraitChaîne(sExtractDay, "BEGINNING", eCpt_Beginning)
+      			FIN
+      			eCpt_Period = 1
+      			eCpt_End 	= 1
+      			// Récupération des différentes 'Fin' de période d'heure.
+      			sExtractEnd = XMLExtraitChaîne(sExtractDay, "END", eCpt_End)
+      			TANTQUE sExtractEnd <> ""
+      				GP_tTaskSchedule[eCpt_TaskSchedule]:tEnd[eCpt_Period] = sExtractEnd
+      				eCpt_Period ++
+      				eCpt_End 	++
+      				sExtractEnd = XMLExtraitChaîne(sExtractDay, "END", eCpt_End)
+      			FIN
+      			// Mémorise le nombre de période d'heure pour une journée.
+      			GP_tTaskSchedule[eCpt_TaskSchedule]:ePeriod = (eCpt_Period-1)
+      			
+      			eCpt_TaskSchedule 	++
+      			eCpt_Day 			++
+      			sExtractDay = XMLExtraitChaîne(sExtractAuthorize, "DAY", eCpt_Day)
+      		FIN
+      	FIN
+      	
+      	// --- Chargement des jours et des périodes d'heure où le scannage du répertoire est INTERDIT ---
+      	sExtractProhibited = XMLExtraitChaîne(sSourceXML, "PROHIBITED", 1)
+      	SI sExtractProhibited <> ""
+      		eCpt_Day = 1
+      		sExtractDay = XMLExtraitChaîne(sExtractProhibited, "DAY", eCpt_Day)
+      		TANTQUE sExtractDay <> ""
+      			// Mémorisation du type d'Ordre sur la planification.
+      			GP_tTaskSchedule[eCpt_TaskSchedule]:sOrder = "PROHIBITED"
+      			// Récupération du jour de la semaine.
+      			GP_tTaskSchedule[eCpt_TaskSchedule]:sDayName = XMLExtraitChaîne(sExtractDay, "NAME", 1)
+      			eCpt_Period 	= 1
+      			eCpt_Beginning 	= 1
+      			// Récupération des différentes 'Début' de période d'heure.
+      			sExtractBeginning = XMLExtraitChaîne(sExtractDay, "BEGINNING", eCpt_Beginning)
+      			TANTQUE sExtractBeginning <> ""
+      				GP_tTaskSchedule[eCpt_TaskSchedule]:tBeginning[eCpt_Period] = sExtractBeginning
+      				eCpt_Period 	++
+      				eCpt_Beginning 	++
+      				sExtractBeginning = XMLExtraitChaîne(sExtractDay, "BEGINNING", eCpt_Beginning)
+      			FIN
+      			eCpt_Period = 1
+      			eCpt_End 	= 1
+      			// Récupération des différentes 'Fin' de période d'heure.
+      			sExtractEnd = XMLExtraitChaîne(sExtractDay, "END", eCpt_End)
+      			TANTQUE sExtractEnd <> ""
+      				GP_tTaskSchedule[eCpt_TaskSchedule]:tEnd[eCpt_Period] = sExtractEnd
+      				eCpt_Period ++
+      				eCpt_End 	++
+      				sExtractEnd = XMLExtraitChaîne(sExtractDay, "END", eCpt_End)
+      			FIN
+      			// Mémorise le nombre de période d'heure pour une journée.
+      			GP_tTaskSchedule[eCpt_TaskSchedule]:ePeriod = (eCpt_Period-1)
+      			
+      			eCpt_TaskSchedule 	++
+      			eCpt_Day 			++
+      			sExtractDay = XMLExtraitChaîne(sExtractProhibited, "DAY", eCpt_Day)
+      		FIN
+      	FIN
+      	
+      	// Mémorise le nombre de jour où des actions d'Autorisation ou d'Interdiction sont planifiées.
+      	GP_eTaskScheduleNbre = (eCpt_TaskSchedule-1)
+      
+      FIN
+      
+      RENVOYER vrai
+     type : 458752
+   -
+     name : TaskScheduleSearch
+     procedure_id : 1346671048449716463
+     type_code : 15
+     code : |1+
+      Procédure TaskScheduleSearch(LOCAL sNowDate est une chaine, LOCAL sNowTime est une chaine)
+      
+      eTaskSchedule_Nbre 	est un entier = 0	
+      eCpt 				est un entier = 1
+      eCpt_Period 		est un entier = 1
+      sDayName 			est une chaine = ""
+      bAuthorize 			est un booléen = Faux
+      bProhbited 			est un booléen = Faux
+      ePeriod_Nbre 		est un entier = 0
+      
+      
+      sDayName = Majuscule(DateVersJourEnLettre(sNowDate))
+      sNowTime = Gauche(sNowTime, 8)
+      
+      eTaskSchedule_Nbre = GP_eTaskScheduleNbre
+      POUR eCpt = 1 à eTaskSchedule_Nbre
+      	SI GP_tTaskSchedule[eCpt]:sOrder = "AUTHORIZE" ET GP_tTaskSchedule[eCpt]:sDayName = sDayName ALORS
+      		ePeriod_Nbre = GP_tTaskSchedule[eCpt]:ePeriod
+      		POUR eCpt_Period = 1 à ePeriod_Nbre
+      			SI sNowTime >= GP_tTaskSchedule[eCpt]:tBeginning[eCpt_Period] ET sNowTime <= GP_tTaskSchedule[eCpt]:tEnd[eCpt_Period] ALORS
+      				bAuthorize = vrai
+      				SORTIR
+      			FIN
+      		FIN
+      	FIN
+      	SI bAuthorize = vrai alors sortir
+      FIN
+      
+      eTaskSchedule_Nbre = GP_eTaskScheduleNbre
+      POUR eCpt = 1 à eTaskSchedule_Nbre
+      	SI GP_tTaskSchedule[eCpt]:sOrder = "PROHIBITED" ET GP_tTaskSchedule[eCpt]:sDayName = sDayName ALORS
+      		ePeriod_Nbre = GP_tTaskSchedule[eCpt]:ePeriod
+      		POUR eCpt_Period = 1 à ePeriod_Nbre
+      			SI sNowTime >= GP_tTaskSchedule[eCpt]:tBeginning[eCpt_Period] ET sNowTime <= GP_tTaskSchedule[eCpt]:tEnd[eCpt_Period] ALORS
+      				bProhbited = vrai
+      				SORTIR
+      			FIN
+      		FIN
+      	FIN
+      	SI bProhbited = vrai alors sortir
+      FIN
+      
+      
+      
+      SI bProhbited = vrai ALORS
+      	SI bAuthorize = vrai ALORS
+      		RENVOYER FAUX
+      	SINON
+      		RENVOYER FAUX
+      	FIN
+      SINON
+      	SI bAuthorize = vrai ALORS
+      		RENVOYER vrai
+      	SINON
+      		RENVOYER FAUX
+      	FIN
+      FIN
+     type : 458752
+   -
+     name : Automate_Module
+     procedure_id : 1346672723492528934
+     type_code : 15
+     code : |1-
+      PROCEDURE Automate_Module()
+      
+      vCodeReturn 		est un variant = Null
+      sRes_Fic_Flag_BD 	est une chaine = ""
+      sBD_Fic_Flag 		est une chaine = ""
+      iNECpt 				est un entier = 0
+      iNENbre 				est un entier = 0
+      
+      
+      ServiceTemporise(GP_eScanTimeSleep)
+      // Vérifie si il doit y avoir un Arrêt du Service.
+      SI GP_bDaemonStopRequest = Vrai ALORS
+      	GP_sDaemonEtat = "A"
+      	FinService(fsArrêt)
+      FIN
+      
+      // --- Vérifie si la tache est autorisée à rechercher des fichiers dans le répertoire à Scanner ---
+      SI TaskScheduleSearch(DateSys(), HeureSys()) ALORS
+      	
+      	// Ré-Initialisation du fichier LOG.
+      	libérer GP_oLog
+      	vCodeReturn = File_LOG_Ini_Defaut()
+      	SI vCodeReturn = __ERROR ALORS
+      		GP_sDaemonEtat = "A"
+      		FinService(fsArrêt)
+      	FIN
+      	
+      	//	 --- Copie de la Base Centrale vers le serveur SFTP ---
+      //	vCodeReturn = Copy_BD_SFTP()
+      	SI vCodeReturn = __ERROR ALORS GP_bDaemonStopRequest = Vrai
+      	ServiceTemporise(GP_eScanTimeSleep)
+      	// Vérifie si il doit y avoir un Arrêt du Service.
+      	SI GP_bDaemonStopRequest = Vrai ALORS
+      		GP_sDaemonEtat = "A"
+      		FinService(fsArrêt)
+      	FIN
+      	
+      	//	 --- Copie et Intégration des données de chaque PDA du serveur SFTP vers la Base Centrale ---
+      //	vCodeReturn = Copy_PDA_SFTP()
+      	SI vCodeReturn = __ERROR ALORS GP_bDaemonStopRequest = Vrai
+      	ServiceTemporise(GP_eScanTimeSleep)
+      	// Vérifie si il doit y avoir un Arrêt du Service.
+      	SI GP_bDaemonStopRequest = Vrai ALORS
+      		GP_sDaemonEtat = "A"
+      		FinService(fsArrêt)
+      	FIN	
+      	
+      FIN
+      
+      RENVOYER __OK
+     type : 458752
+   -
+     name : File_INI_Extract_KeyWord
+     procedure_id : 1346697162048844629
+     type_code : 15
+     code : |1-
+      procédure File_INI_Extract_KeyWord(sIni_Section est une chaine, sIni_MotClef est une chaine, sVar_Name est une chaîne, sIni_ResultDefault est une chaine = __ERROR)
+      	sIni_Result est une chaine
+      	sIni_Result	= INILit(sIni_Section, sIni_MotClef, sIni_ResultDefault, ComplèteRep(GP_sIni_Local_Path)+GP_sIni_Local_File)
+      	SI sIni_Result = __ERROR ALORS
+      		File_LOG_Ini_Defaut("===== Démarrage du Service Windows : <"+"TIGRE - "+GP_sProg_Nom+"> version "+GP_sProg_Version+" =====")
+      		GP_oLog:Msg_Erreur("Le Mot Clé <"+sIni_MotClef+"> de la Section <"+sIni_Section+"> du fichier <"+GP_sIni_Local_File+"> n'est pas le résultat attendu !!!")
+      		RENVOYER __ERROR
+      	SINON
+      		SELON TypeVar(sVar_Name)
+      			CAS wlBooléen : 	{sVar_Name,indVariable} = Val(sIni_Result, "d")
+      			CAS wlEntier : 		{sVar_Name,indVariable} = Val(sIni_Result, "d")
+      			CAS wlMonétaire : 	{sVar_Name,indVariable} = Val(sIni_Result, "d")
+      			AUTRE CAS : {sVar_Name,indVariable} = sIni_Result
+      		FIN
+      		RENVOYER __OK
+      	FIN
+      	
+     type : 458752
+   -
+     name : File_Prepare
+     procedure_id : 1346981239586158251
+     type_code : 15
+     code : |1-
+      procédure File_Prepare(sDirSrc est une chaîne, sDirDest est une chaine = GP_sTemp_Rep)
+      	Resp est un booléen
+      	sServer est une chaine = ExtraitChaîne(sDirSrc, 3, "\", DepuisDébut)
+      	bPingRep est un booléen = faux
+      	dhMail_Sended_At est un dateHeure
+      	
+      	POUR iCpt = 1 _À_ (GP_iTimeout_Ping*6) // 30 = 5 x 6 = 5 minutes.
+      		bPingRep = Ping(sServer)
+      		si bPingRep ALORS 
+      			dhMail_Sended_At = ""
+      			break
+      		FIN
+      		ServiceTemporise(10*100) // 10 x 100 ms.
+      	FIN
+      	
+      	SI bPingRep ALORS 
+      		IF fRepExiste(sDirSrc) = Faux THEN GP_oLog:Msg_Log(__ERROR, "Le dossier <"+ sDirSrc +"> est introuvable")
+      			
+      		sFileList est une chaine = fListeFichier(ComplèteRep(sDirSrc)+"*.TXT", frNonRécursif)
+      		FOR EACH STRING sFile OF sFileList SEPARATED BY CR
+      			Resp = fMoveFile(sFile, ComplèteRep(sDirDest) + fExtraitChemin(sFile,fFichier+fExtension))
+      			SI Resp = Faux ALORS
+      				GP_oLog:Msg_Log(__ERROR, "Le fichier <" + sFile + "> n'a pas pu être copié."+RC+ErreurInfo(errComplet))
+      			SINON
+      				GP_oLog:Msg_Log(__INFO, "----- Rapatriement du fichier <" + sFile + "> depuis <"+sDirSrc+"> vers <"+sDirDest+"> -----")
+      			FIN
+      		FIN
+      		GP_oLog:Msg_Log(__INFO, "Fin du rapatriement des fichiers")
+      		
+      	SINON
+      		IF (Val(DateHeureSys()[[À 16]], "d") - Val(dhMail_Sended_At[[A 16]] , "d") > GP_iTimeout_Sending_Mail+00000) ALORS
+      			Msg_Alert("M+P", "Échec de communication avec le serveur <"+ sServer +">")
+      			dhMail_Sended_At = DateHeureSys()
+      		FIN
+      	END
+      	
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : BgAAAAYAAAA6ih3UbgNXHwTtiPSFUEj+2fi/m7v4QV2rqidAupM=
+  original_name : COL_SansNom1
+resources :
+ string_res :
+  identifier : 0x12b055ed001cedf6
+  internal_properties : BgAAAAYAAAAnMYFQ1bL/vz9ehh7L22SNNSlIzGTOI8h5F/WtgDNP
+custom_note :
+ internal_properties : BgAAAAYAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

@@ -1,0 +1,292 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : RUNEO_Printer_Bill
+ major_version : 27
+ minor_version : 0
+ type : 4097
+ description : ""
+ subtype : 0
+project :
+ identifier : 0x0
+ internal_properties : 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
+ configurations :
+  -
+    name : Service 64 bits
+    internal_properties : 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
+    configuration_id : 2382936415637552063
+    type : 13
+    version : {}
+    language : 1
+    64bits : true
+    new_features_help :
+     name : ""
+     internal_properties : BwAAAAcAAABLBGQFyuhJs57riwoFirR085PsLACtYv1NemKx7q/FGM5VtYYwZY0oPWOWF3ZTEd2rUsJXSFeQ
+ elements :
+  identifier : 0x42b04d5501f959a6
+  elements :
+   -
+     name : CLS_Mail_LOG_Service
+     identifier : 0x42b0568b02105486
+     internal_properties : BwAAAAcAAAA1ER0BvpuTTBEv88CshSh879JexpqrZ912wRejZcpAoGRIHDjZKaKkYt7YIOAQ6NggIA==
+     physical_name : .\CLS_Mail_LOG_Service.wdc
+     type : 4
+   -
+     name : CLS_Fichier_LOG_Service
+     identifier : 0x42b0567c020e1b55
+     internal_properties : BwAAAAcAAAAGDG6ycS6GqYzaEtw/Hgqy9Jcza1ZW+IaqsOWiGhSAqETaW7Bdrb9DzUmzDZVLN6kTEw==
+     physical_name : .\CLS_Fichier_LOG_Service.wdc
+     type : 4
+   -
+     name : COL_ProcéduresGlobales
+     identifier : 0x42b055ef020af4ad
+     internal_properties : BwAAAAcAAABq4FK2dTJ6pbiG3QcxNL3QcmcRUVLk1GROD8KLO/edc4lFCGypUf5/CTWvCYlHM6Vv9w==
+     physical_name : .\COL_ProcéduresGlobales.wdg
+     type : 7
+  other_elements : []
+  net_assemblies : []
+  uwp_api : []
+  external_components : []
+  internal_components : []
+ data_directory : <RepExeOuRepDonneesCommun>
+ common_generation_directory : true
+ languages :
+  - fr-FR
+ code_elements :
+  type_code : 0
+  p_codes :
+   -
+     code : |1-
+      	CONSTANT
+      		__OK	= "#OK"
+      		__ERROR	= "#ERROR"
+      		__INFO = "#INFO"
+      	FIN
+      	
+      	// TEST GIT
+      	
+      	GLOBALE
+      	GP_sProg_Nom				est une chaine	= ""
+      	GP_sProg_Rep				est une chaine	= ""
+      	GP_sProg_Version			est une chaine	= ""
+      	GP_sTemp_Rep				est une chaine	= ""
+      	GP_sIni_Local_Path			est une chaine	= ""
+      	GP_sIni_Local_File			est une chaine	= ""
+       	GP_sIni_Local_Return		est une chaine 	= ""
+       	GP_nsIni_Ret_Time			est un numérique = 0
+       	GP_iTimeout_Ping			est un entier 	= 0
+       	GP_iTimeout_Sending_Mail	est un entier	= 0
+      	
+      	GP_sLog_Rep					est une chaine	= ""
+      	GP_sLog_Fic					est une chaine	= ""
+      	GP_oLog						est un objet dynamique
+      	GP_bLog						est un booléen	= Faux
+      	
+      	GP_sDaemonEtat				est une chaine	= ""
+      	GP_bDaemonStart				est un booléen	= Faux
+      	GP_bDaemonStopRequest		est un booléen	= faux
+      	GP_eScanTimeSleep			est un entier	= 0
+      	
+      	GP_sMail_SMTP				est une chaine	= ""
+      	GP_sMail_Exp				est une chaine	= ""
+      	GP_eMail_Dest_Nbre			est un entier	= 0
+      	GP_tMail_Dest				est un tableau	<Agrandissement=N> de chaines
+      	GP_sMail_Objet_Defaut		est une chaine	= ""
+      	GP_sMail_Contenu			est une chaine	= ""
+      	GP_oMail					est un objet dynamique 
+      	
+      	GP_sImport_Dir				est une chaine 	= ""
+      	GP_sError_Dir				est une chaine 	= ""
+      	GP_iCurrent_File_ID			est un entier	= -1
+      	GP_sCurrent_Line			est une chaine	= ""
+      	GP_sPrinter_Name			est une chaine	= ""
+      	GP_sPrinter_IP				est une chaine	= ""
+      	
+      	GP_stTaskSchedule			est une structure
+      		sOrder						est une chaine
+      		sDayName					est une chaine
+      		ePeriod						est un entier sur 1 octet
+      		tBeginning					est un tableau de 24 chaines
+      		tEnd						est un tableau de 24 chaines		
+      	FIN
+      	
+      	GP_tTaskSchedule			est un tableau de 14 GP_stTaskSchedule
+      	GP_eTaskScheduleNbre		est un entier	= 0
+      	GP_sTaskScheduleFic			est une chaine	= ""
+      	GP_sFileList				est une chaine	= ""
+      		
+      LOCALE
+      	vCodeReturn 				est un variant 	= Null
+      	
+      	
+      // --- Initialisation des informations sur le Programme ---
+      GP_sProg_Nom		= "RUNEO_Printer_Bill"	
+      GP_sProg_Rep		= fRepExe()
+      GP_sProg_Version	= ExeInfo(exeVersion)
+      
+      // Écrit un événement indiquant que le service est démarré.
+      ServiceEcritEvénementJournal("Début d'exécution du service : "+"TIGRE - "+GP_sProg_Nom+" v"+GP_sProg_Nom, ejInformation)
+      
+      QUAND EXCEPTION
+      	// En cas d'exception, ajoute une erreur dans le journal des événements.
+      	ServiceEcritEvénementJournal(ExceptionInfo(errComplet), ejErreur)
+      	SI GP_bLog = Vrai ALORS GP_oLog:Msg_Log(__ERROR, ExceptionInfo(errComplet))
+      	
+      	// Arrête le service.
+      	FinService(fsArrêt)
+      FIN
+      
+      // --- Chargement du fichier INI "Local" à l'application ---
+      GP_sIni_Local_Path 	= ComplèteRep(GP_sProg_Rep)
+      SI EnModeTest() = Vrai ALORS
+      	GP_sIni_Local_File 	= GP_sProg_Nom+".ini"
+      SINON
+      	GP_sIni_Local_File 	= fExtraitChemin(ExeInfo(exeNom), fFichier)+".ini"
+      FIN
+      vCodeReturn = File_INI_Local()
+      SI vCodeReturn = __ERROR ALORS FinService(fsArrêt)
+      ServiceEcritEvénementJournal("Chargement du fichier INI 'Local' du service <"+"TIGRE - "+GP_sProg_Nom+"> version "+GP_sProg_Version, ejInformation)
+      
+      // --- Initialisation du fichier LOG ---
+      vCodeReturn = File_LOG_Ini_Defaut()
+      SI vCodeReturn = __ERROR ALORS FinService(fsArrêt)
+      
+      vCodeReturn = GP_oLog:Msg_Log("#INFO", "===== Démarrage du Service Windows : <"+"TIGRE - "+GP_sProg_Nom+"> version "+GP_sProg_Version+" =====")
+      SI vCodeReturn = __ERROR ALORS FinService(fsArrêt)
+      GP_oLog:Msg_Log("#INFO", "Chargement du fichier INI 'Local' du programme")
+      
+      // --- Initialisation des informations sur le Programme ---
+      GP_sTemp_Rep	= ComplèteRep(GP_sProg_Rep)+"temp"
+      vCodeReturn		= fRepCrée(GP_sTemp_Rep)
+      SI vCodeReturn = Faux ALORS
+      	ServiceEcritEvénementJournal("Le Répertoire Temporaire du programme <"+GP_sTemp_Rep+"> n'existe pas et n'a pas pu être créé !"+RC+ErreurInfo(errMessage), ejErreur)
+      	FinService(fsArrêt)
+      FIN
+      GP_oLog:Msg_Log("#INFO", "Initialisation du Chemin Temporaire Local du programme")
+      
+      // --- Chargement de la Planification de l'Automate ---
+      GP_oLog:Msg_Log("#INFO", "Chargement de la Planification de l'Automate - EN COURS ...")
+      GP_sTaskScheduleFic	= ComplèteRep(GP_sProg_Rep)+"TaskSchedule"+".xml"
+      vCodeReturn			= TaskScheduleLoad(GP_sTaskScheduleFic)
+      SI vCodeReturn = Faux ALORS FinService(fsArrêt)
+      GP_oLog:Msg_Log("#INFO", "Chargement de la Planification de l'Automate - TERMINE")
+      
+      // --- Initialisation par défaut de la boucle de l'Automate ---
+      GP_bDaemonStopRequest	= Faux
+      GP_sDaemonEtat			= "D"
+      
+      // Initialisation de l'e-mail d'Alerte.
+      GP_oMail				= allouer un objet CLS_Mail_LOG_Service(GP_sMail_SMTP, GP_sMail_Exp, GP_tMail_Dest, GP_tMail_Dest..Occurrence, GP_sMail_Objet_Defaut, vCodeReturn)
+      
+      GP_sFileList = fListFile(ComplèteRep(GP_sTemp_Rep) + "*.TXT")
+      
+      GP_oLog:Msg_Log("#INFO", "Purge du dossier <"+GP_sFileList+"> - EN COURS ...")
+      FOR EACH STRING sCurrent_file OF GP_sFileList SEPARATED BY CR
+      	fSupprime(sCurrent_file)
+      END
+      GP_oLog:Msg_Log("#INFO", "Purge du dossier <"+GP_sFileList+"> - TERMINE ...")
+      
+      GP_oLog:Msg_Log("#INFO", "Dossier d'importation : <"+GP_sTemp_Rep+">")
+      GP_oLog:Msg_Log("#INFO", "Dossier de fichier en erreurs :  <"+GP_sError_Dir+">")
+      
+      iCreateFont(2, 1, iGras, iRoman)
+      iCreateFont(1, 8, iGras, iRoman)
+     type : 196608
+   -
+     code : |1-
+      
+      SI GP_bDaemonStart = Faux ALORS GP_oLog:Msg_Log("#INFO", "----- Automate - Démarré -----")
+      
+      GP_bDaemonStart = Vrai
+      File_Prepare(GP_sImport_Dir, GP_sTemp_Rep)
+      GP_sFileList = fListFile(ComplèteRep(GP_sTemp_Rep) + "*.TXT")
+      
+      
+      FOR EACH STRING sCurrent_file OF GP_sFileList SEPARATED BY CR
+      	GP_oLog:Msg_Log(__INFO, "Traitement du fichier <"+ sCurrent_file + ">")
+      	
+      	GP_iCurrent_File_ID	= fOpen(sCurrent_file, foRead)
+      	
+      	IF fRepExiste(GP_sError_Dir) THEN fRepCrée(GP_sError_Dir)
+      	IF fRepExiste(GP_sTemp_Rep) THEN fRepCrée(GP_sTemp_Rep)
+      	
+      	IF GP_iCurrent_File_ID = -1 ALORS 
+      		IF fMoveFile(sCurrent_file, ComplèteRep(GP_sError_Dir) + fExtraitChemin(sCurrent_file,fFichier) + HeureSys() + fExtraitChemin(sCurrent_file,fExtension)) ALORS GP_oLog:Msg_Log(__ERROR, "Le déplacement du fichier <"+ sCurrent_file + "> n'a pas réussi." + RC + ErreurInfo(errComplet))
+      		GP_oLog:Msg_Log(__ERROR, "Le fichier <"+ sCurrent_file + "> n'a pas pu être ouvert." + RC + ErreurInfo(errComplet))
+      		continuer 
+      	END
+      	
+      	GP_sCurrent_Line = fReadLine(GP_iCurrent_File_ID)
+      	
+      	IF Contient(GP_sCurrent_Line,";") THEN
+      		GP_sPrinter_Name	= ExtractString(GP_sCurrent_Line, 1, ";")
+      		GP_sPrinter_IP		= ExtractString(GP_sCurrent_Line, 2, ";")
+      	ELSE
+      		GP_sPrinter_Name = GP_sCurrent_Line
+      	END
+      	
+      	IF(iConfigure(GP_sPrinter_Name)) THEN
+      		WHILE GP_sCurrent_Line <> EOT
+      			GP_sCurrent_Line = fReadLine(GP_iCurrent_File_ID)
+      			iPrint(iFont(1) + GP_sCurrent_Line)
+      			iFont(2)
+      			iSkipLine()
+      		END
+      		
+      		GP_oLog:Msg_Log(__INFO, "Impression demandée sur l'imprimante : <"+ GP_sPrinter_Name + ">")
+      		iEndPrinting()
+      		fClose(GP_iCurrent_File_ID)
+      		
+      		GP_oLog:Msg_Log(__INFO, "Suppression du fichier <"+ sCurrent_file + ">")
+      		fDelete(sCurrent_file)      
+      	ELSE
+      		fClose(GP_iCurrent_File_ID)
+      		GP_oLog:Msg_Log(__INFO, "Déplacement du fichier <"+ sCurrent_file + "> dans le dossier <"+GP_sError_Dir+">")
+      		if fMoveFile(sCurrent_file, ComplèteRep(GP_sError_Dir) + fExtraitChemin(sCurrent_file,fFichier) + HeureSys() + fExtraitChemin(sCurrent_file,fExtension)) = Faux ALORS GP_oLog:Msg_Log(__ERROR, "Le déplacement du fichier <"+ sCurrent_file + "> n'a pas réussi." + RC + ErreurInfo(errComplet))
+      	END
+      	GP_oLog:Msg_Log(__INFO, "Fin Traitement du fichier <"+ sCurrent_file + ">")
+      END
+      
+      ServiceTemporise(GP_eScanTimeSleep)
+     type : 196622
+   -
+     code : |1+
+      
+      GP_oLog:Msg_Log("#INFO", "===== Arrêt du Service Windows : <"+"TIGRE - "+GP_sProg_Nom+"> version "+GP_sProg_Version+" =====")
+     type : 196610
+   -
+     code : |1+
+      
+      GP_bDaemonStopRequest = Vrai
+      
+      ServiceTemporise(300)
+      
+      SI GP_bLog = Vrai ALORS GP_oLog:Msg_Log("#INFO", "----- Automate - Arrêté -----")
+      
+      // Écrit un événement indiquant que le service est arrêté.
+      ServiceEcritEvénementJournal("Fin d'exécution du service : "+"TIGRE - "+GP_sProg_Nom+" v"+GP_sProg_Version, ejInformation)
+     type : 196623
+   -
+     type : 196621
+   -
+     type : 196627
+     enabled : false
+  orphans :
+   -
+     name : Service 64 bits
+     identifier : 0x42b04d5501fa59a6
+     code_elements :
+      type_code : 159
+      p_codes : []
+ code_parameters :
+  internal_properties : BwAAAAcAAAA6ih3UbgNXHwTtiPSFUEj+2fi/m7v4QV2rqidAupM=
+rad :
+ internal_properties : BwAAAAcAAABhIL0UXeZmxDJxY3Xy0Q==
+project_explorer :
+ explorer_type : project
+resources :
+ string_res :
+  identifier : 0x0
+  internal_properties : BwAAAAcAAAAnMYFQ1bL/vz9ehh7L22SNNSlIzGTOI8h5F/WtgDNP
+custom_note :
+ internal_properties : BwAAAAcAAAAd98VSJfHHqE3P0QHwrwdhn7ig8dWBR6valpUTgnAMTVXiDg==

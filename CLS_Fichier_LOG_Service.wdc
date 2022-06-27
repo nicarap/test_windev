@@ -1,0 +1,490 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : CLS_Fichier_LOG_Service
+ major_version : 27
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x1faa244b00120010
+ internal_properties : BgAAAAYAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      
+      // ===== CLS_Fichier_LOG_Service - Version 1.1 du 09/05/2012 par Maxence CORMIER =====
+      
+      CLS_Fichier_LOG_Service est une classe
+      	PROTÉGÉ CONSTANT
+      		GC_sFile 			est une chaine
+      		GC_sFile_Mask 		est une chaine		
+      		GC_sPath 			est une chaine
+      		GC_sPath_Mask 		est une chaine
+      		GC_sPath_Default 	est une chaine	
+      		GC_sUser 			est une chaine	
+      Fin
+       
+     type : 131072
+   -
+     code : |1-
+      
+      	
+     type : 131074
+  procedures :
+   -
+     name : Constructeur
+     procedure_id : 2281676065758969872
+     type_code : 27
+     code : |1+
+      Procédure Constructeur(sFile_Mask est une chaine, sPath_Mask est une chaine = "", sPath_Default est une chaine = "#DEFAULT", ...
+      					   sUser est une chaine = "", vCodeReturn est un variant = __ERROR)
+      
+      :GC_sFile_Mask 		= sFile_Mask
+      :GC_sPath_Mask 		= sPath_Mask
+      :GC_sPath_Default 	= sPath_Default
+      :GC_sUser 			= sUser
+      
+      vCodeReturn = :Msg_Log("#INITIALISATION")
+      
+      RENVOYER vCodeReturn
+     type : 589824
+   -
+     name : Destructeur
+     procedure_id : 2281676065759035408
+     type_code : 28
+     code : |1+
+      Procédure Destructeur()
+      
+     type : 655360
+   -
+     name : Msg_Log
+     procedure_id : 2281676065759100944
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] Msg_Log ( [<sMsg_Type> est chaîne [, <sMsg> est chaîne]])
+      //
+      // Paramètres :
+      //	sMsg_Type (chaîne - valeur par défaut="#INFO") : <indiquez ici le rôle de sMsg_Type>
+      //	sMsg (chaîne) : <indiquez ici le rôle de sMsg>
+      // Valeur de retour :
+      // 	chaîne :       // 	Aucune
+      //// Exemple :
+      // Indiquez ici un exemple d'utilisation.
+      //
+      Procédure Msg_Log(sMsg_Type est une chaine = "#INFO", sMsg est une chaine = "")
+      
+      sFile_LOG 	est une chaine = ""
+      eFile_ID 	est un entier = -1
+      vCodeReturn est un variant = Null
+      sLine 		est une chaine = ""
+      sText 		est une chaine = ""
+      eCpt 		est un entier = 0
+      
+      
+      // --- Initialisation du Chemin et du fichier LOG ---
+      vCodeReturn = :Log_File_Path()
+      SI vCodeReturn = __ERROR ALORS RENVOYER __ERROR
+      
+      // --- Initialisation du Nom du fichier LOG ---
+      vCodeReturn = :Log_File_Name()
+      SI vCodeReturn = __ERROR ALORS RENVOYER __ERROR
+      
+      // --- Ouverture du fichier LOG ---
+      sFile_LOG = ComplèteRep(:GC_sPath)+:GC_sFile
+      
+      SI fFichierExiste(sFile_LOG) = Faux ALORS
+      	vCodeReturn = fRepCrée(:GC_sPath)
+      	SI vCodeReturn = Faux ALORS
+      		ServiceEcritEvénementJournal("Impossible de se connecter au Répertoire du fichier LOG ou de le Créer !"+rc+rc+ErreurInfo(errMessage), ejErreur)
+      		RENVOYER __ERROR
+      	FIN
+      FIN
+      
+      eFile_ID = fOuvre(sFile_LOG, foCréationSiInexistant+foLectureEcriture+foAjout)
+      SI eFile_ID = -1 ALOrS
+      	ServiceEcritEvénementJournal("Impossible d'Ouvrir ou de Créer le fichier LOG <"+sFile_LOG+"> !"+RC+RC+ErreurInfo(errMessage), ejErreur)
+      	RENVOYER __ERROR
+      FIN
+      
+      // ---- Ecriture dans le fichier LOG ---
+      SI sMsg_Type <> "#INITIALISATION" ALORS
+      	eCpt = 1
+      	sText = ExtraitChaîne(sMsg, eCpt, RC, DepuisDébut)
+      	TANTQUE sText <> EOT
+      		
+      		sLine  = ""
+      		sLine += DateSys()
+      		sLine += TAB
+      		sLine += HeureSys()
+      		sLine += TAB
+      		SELON sMsg_Type
+      			CAS "#INFO"
+      				sLine += "I"
+      			CAS __ERROR
+      				sLine += "E"
+      			AUTRE CAS
+      				ServiceEcritEvénementJournal("Le type de Message suivant <"+sMsg_Type+"> est Inconnu pour écrire une ligne dans le fichier LOG <"+:GC_sFile+"> !", ejErreur)
+      				RENVOYER __ERROR
+      		FIN
+      		sLine += TAB
+      		sLine += NetNomMachine()
+      		sLine += TAB
+      		sLine += :GC_sUser
+      		sLine += TAB
+      		sLine += sText
+      		
+      		vCodeReturn = fEcritLigne(eFile_ID, sLine)
+      		SI vCodeReturn = Faux ALORS
+      			ServiceEcritEvénementJournal("Impossible d'écrire une Ligne dans  le fichier LOG <"+sFile_LOG+"> !"+RC+RC+ErreurInfo(errMessage), ejErreur)
+      			RENVOYER __ERROR
+      		FIN
+      		
+      		eCpt ++
+      		sText = ExtraitChaîne(sMsg, eCpt, RC, DepuisDébut)
+      	FIN
+      FIN
+      
+      // --- Fermeture du fichier LOG ---
+      fFerme(eFile_ID)
+      
+      RENVOYER "__OK"
+     type : 458752
+   -
+     name : Log_File_Name
+     procedure_id : 2281676065759166480
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] Log_File_Name ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	chaîne :  // 	Aucune
+      //// Exemple :
+      // Indiquez ici un exemple d'utilisation.
+      //
+      Procédure PROTEGEE Log_File_Name()
+      
+      sFile_Temp 				est une chaine = ""
+      sChaine 				est une chaine = ""
+      eCpt 					est un entier = 0
+      tTag_Start 				est un tableau dynamique
+      tTag_End 				est un tableau dynamique
+      eTag_Start_Nbre 		est un entier = 0
+      eTag_End_Nbre 			est un entier = 0
+      ePosition_Start 		est un entier = 0
+      ePosition_Start_Plus 	est un entier = 0
+      ePosition_End 			est un entier = 0
+      sDate 					est une chaine = ""
+      
+      
+      // --- Initialisation du Nom du fichier LOG ---
+      SI :GC_sFile = "" ALORS
+      	
+      	SI :GC_sFile_Mask = "" ALORS
+      		ServiceEcritEvénementJournal("Aucun Nom pour le fichier LOG a été transmit à l'initialisation du Programme !", ejErreur)
+      		RENVOYER __ERROR
+      	FIN
+      	
+      	// Vérifie si le Masque du Nom du fichier LOG possède une partie variable.
+      	SI ChaîneOccurrence(:GC_sFile_Mask, "<") = 0 ALORS
+      		SI ChaîneOccurrence(:GC_sFile_Mask, ">") = 0 ALORS
+      			// Le Masque du Nom du fichier LOG est statique.
+      			:GC_sFile = :GC_sFile_Mask
+      		SINON
+      			ServiceEcritEvénementJournal("Il manque une balise de début '<' qui détermine une partie variable du Nom pour le fichier LOG : "+RC+RC+:GC_sFile_Mask, ejErreur)
+      			RENVOYER __ERROR
+      		FIN
+      	SINON
+      		// Vérifie la conformité du ou des parties variables du Masque pour le Nom du fichier LOG.
+      		SI ChaîneOccurrence(:GC_sFile_Mask, ">") = 0 ALORS
+      			ServiceEcritEvénementJournal("Il manque une balise de fin '>' qui détermine une partie variable du Nom pour le fichier LOG : "+RC+RC+:GC_sFile_Mask, ejErreur)
+      			RENVOYER __ERROR
+      		FIN
+      		SI ChaîneOccurrence(:GC_sFile_Mask, "<") <> ChaîneOccurrence(:GC_sFile_Mask, ">") ALORS
+      			ServiceEcritEvénementJournal("Il n'y a pas le même nombre de balise de début '<' et de balise de fin '>' pour déterminer les parties variables du Nom pour le fichier LOG : "+RC+RC+:GC_sFile_Mask, ejErreur)
+      			RENVOYER __ERROR
+      		SINON
+      			eTag_Start_Nbre = ChaîneOccurrence(:GC_sFile_Mask, "<")
+      			eTag_End_Nbre 	= ChaîneOccurrence(:GC_sFile_Mask, ">")
+      			tTag_Start 	= allouer un tableau de eTag_Start_Nbre entiers
+      			tTag_End 	= allouer un tableau de eTag_End_Nbre entiers
+      			POUR eCpt = 1 A eTag_End_Nbre
+      				ePosition_Start = PositionOccurrence(:GC_sFile_Mask, "<", eCpt, DepuisDébut)
+      				ePosition_End 	= PositionOccurrence(:GC_sFile_Mask, ">", eCpt, DepuisDébut)
+      				tTag_Start[eCpt] = ePosition_Start
+      				tTag_End[eCpt] = ePosition_End
+      				SI ePosition_End < ePosition_Start ALORS
+      					ServiceEcritEvénementJournal("Le Masque du Nom pour le fichier LOG n'est pas conforme : "+RC+RC+:GC_sFile_Mask, ejErreur)
+      					RENVOYER __ERROR
+      				FIN
+      				SI (eCpt+1) <= eTag_End_Nbre ALORS
+      					ePosition_Start_Plus = PositionOccurrence(:GC_sFile_Mask, "<", (eCpt+1), DepuisDébut)
+      					SI ePosition_Start_Plus < ePosition_End ALORS
+      						ServiceEcritEvénementJournal("Le Masque du Nom pour le fichier LOG n'est pas conforme : "+RC+RC+:GC_sFile_Mask, ejErreur)
+      						RENVOYER __ERROR
+      					FIN					
+      				FIN
+      			FIN
+      		FIN
+      		// Le Masque du Nom du fichier LOG possède une partie variable.
+      		sFile_Temp = ExtraitChaîne(:GC_sFile_Mask, 1, "<", DepuisDébut)
+      		POUR eCpt = 1 A eTag_End_Nbre
+      			sDate = DateSys()
+      			sChaine = :GC_sFile_Mask[[(tTag_Start[eCpt]+1) A (tTag_End[eCpt]-1)]]
+      			SELON sChaine
+      				CAS "AA"
+      					sFile_Temp += sDate[[3 A 4]]
+      				CAS "AAAA"
+      					sFile_Temp += sDate[[1 A 4]]
+      				CAS "AAMM"
+      					sFile_Temp += sDate[[3 A 4]]+sDate[[5 A 6]]
+      				CAS "AAAAMM"
+      					sFile_Temp += sDate[[1 A 4]]+sDate[[5 A 6]]
+      				CAS "AAMMJJ"
+      					sFile_Temp += sDate[[3 A 4]]+sDate[[5 A 6]]+sDate[[7 A 8]]
+      				CAS "AAAAMMJJ"
+      					sFile_Temp += sDate[[1 A 4]]+sDate[[5 A 6]]+sDate[[7 A 8]]
+      				CAS "MM"
+      					sFile_Temp += sDate[[5 A 6]]
+      				CAS "MMJJ"
+      					sFile_Temp += sDate[[5 A 6]]+sDate[[7 A 8]]
+      				CAS "JJ"
+      					sFile_Temp += sDate[[7 A 8]]
+      				CAS "#HOTE"
+      					sFile_Temp += NetNomMachine()
+      				AUTRE CAS
+      					ServiceEcritEvénementJournal("La Variable suivante <"+sChaine+"> du Masque du Nom du Fichier LOG n'est pas conforme  : "+RC+RC+:GC_sFile_Mask, ejErreur)
+      					RENVOYER __ERROR
+      			FIN
+      			SI (eCpt+1) <= eTag_End_Nbre ALORS
+      				sFile_Temp += :GC_sFile_Mask[[(tTag_End[eCpt]+1) A (tTag_Start[(eCpt+1)]-1)]]
+      			FIN
+      		FIN
+      		sFile_Temp += ExtraitChaîne(:GC_sFile_Mask, 1, ">", DepuisFin)
+      		:GC_sFile = sFile_Temp		
+      	FIN
+      FIN
+      
+      RENVOYER "__OK"
+     type : 458752
+   -
+     name : Log_File_Path
+     procedure_id : 2281676065759232016
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] Log_File_Path ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	chaîne :  // 	Aucune
+      //// Exemple :
+      // Indiquez ici un exemple d'utilisation.
+      //
+      Procédure PROTEGEE Log_File_Path()
+      
+      sFile_Temp 				est une chaine = ""
+      sChaine 				est une chaine = ""
+      eCpt 					est un entier = 0
+      tTag_Start 				est un tableau dynamique
+      tTag_End 				est un tableau dynamique
+      eTag_Start_Nbre 		est un entier = 0
+      eTag_End_Nbre 			est un entier = 0
+      ePosition_Start 		est un entier = 0
+      ePosition_Start_Plus 	est un entier = 0
+      ePosition_End 			est un entier = 0
+      sDate 					est une chaine = ""
+      
+      
+      // --- Initialisation du Chemin du fichier LOG ---
+      SI :GC_sPath = "" ALORS
+      	
+      	// Initialisation du Chemin par Défaut du fichier LOG.
+      	SI :GC_sPath_Default = "#DEFAULT" ALORS :GC_sPath_Default = fRepExe()
+      	
+      	SI :GC_sPath_Mask = "" ALORS
+      		// Si il n'y a pas de Chemin alors on prend le Chemin par Défaut du fichier LOG.
+      		:GC_sPath = :GC_sPath_Default
+      	SINON
+      		// Vérifie si le Masque du Chemin du fichier LOG possède une partie variable.
+      		SI ChaîneOccurrence(:GC_sPath_Mask, "<") = 0 ALORS
+      			SI ChaîneOccurrence(:GC_sPath_Mask, ">") = 0 ALORS
+      				// Le Masque du Chemin du fichier LOG est statique.
+      				:GC_sPath = :GC_sPath_Mask
+      			SINON
+      				ServiceEcritEvénementJournal("Il manque une balise de début '<' qui détermine une partie variable du Chemin pour le fichier LOG : "+RC+RC+:GC_sPath_Mask, ejErreur)
+      				RENVOYER __ERROR
+      			FIN
+      		SINON
+      			// Vérifie la conformité du ou des parties variables du Masque pour le Chemin du fichier LOG.
+      			SI ChaîneOccurrence(:GC_sPath_Mask, ">") = 0 ALORS
+      				Erreur("Il manque une balise de fin '>' qui détermine une partie variable du Chemin pour le fichier LOG : "+RC+RC+:GC_sPath_Mask, ejErreur)
+      				RENVOYER __ERROR
+      			FIN
+      			SI ChaîneOccurrence(:GC_sPath_Mask, "<") <> ChaîneOccurrence(:GC_sPath_Mask, ">") ALORS
+      				ServiceEcritEvénementJournal("Il n'y a pas le même nombre de balise de début '<' et de balise de fin '>' pour déterminer les parties variables du Chemin pour le fichier LOG : "+RC+RC+:GC_sPath_Mask, ejErreur)
+      				RENVOYER __ERROR
+      			SINON
+      				eTag_Start_Nbre = ChaîneOccurrence(:GC_sPath_Mask, "<")
+      				eTag_End_Nbre 	= ChaîneOccurrence(:GC_sPath_Mask, ">")
+      				tTag_Start 	= allouer un tableau de eTag_Start_Nbre entiers
+      				tTag_End 	= allouer un tableau de eTag_End_Nbre entiers
+      				POUR eCpt = 1 A eTag_End_Nbre
+      					ePosition_Start = PositionOccurrence(:GC_sPath_Mask, "<", eCpt, DepuisDébut)
+      					ePosition_End 	= PositionOccurrence(:GC_sPath_Mask, ">", eCpt, DepuisDébut)
+      					tTag_Start[eCpt] = ePosition_Start
+      					tTag_End[eCpt] = ePosition_End
+      					SI ePosition_End < ePosition_Start ALORS
+      						ServiceEcritEvénementJournal("Le Masque du Chemin pour le fichier LOG n'est pas conforme : "+RC+RC+:GC_sPath_Mask, ejErreur)
+      						RENVOYER __ERROR
+      					FIN
+      					SI (eCpt+1) <= eTag_End_Nbre ALORS
+      						ePosition_Start_Plus = PositionOccurrence(:GC_sPath_Mask, "<", (eCpt+1), DepuisDébut)
+      						SI ePosition_Start_Plus < ePosition_End ALORS
+      							ServiceEcritEvénementJournal("Le Masque du Chemin pour le fichier LOG n'est pas conforme : "+RC+RC+:GC_sPath_Mask, ejErreur)
+      							RENVOYER __ERROR
+      						FIN					
+      					FIN
+      				FIN
+      			FIN
+      			// Le Masque du Chemin du fichier LOG possède une partie variable.
+      			sFile_Temp = ExtraitChaîne(:GC_sPath_Mask, 1, "<", DepuisDébut)
+      			POUR eCpt = 1 A eTag_End_Nbre
+      				sDate = DateSys()
+      				sChaine = :GC_sPath_Mask[[(tTag_Start[eCpt]+1) A (tTag_End[eCpt]-1)]]
+      				SELON sChaine
+      					CAS "AA"
+      						sFile_Temp += sDate[[3 A 4]]
+      					CAS "AAAA"
+      						sFile_Temp += sDate[[1 A 4]]
+      					CAS "AAMM"
+      						sFile_Temp += sDate[[3 A 4]]+sDate[[5 A 6]]
+      					CAS "AAAAMM"
+      						sFile_Temp += sDate[[1 A 4]]+sDate[[5 A 6]]
+      					CAS "AAMMJJ"
+      						sFile_Temp += sDate[[3 A 4]]+sDate[[5 A 6]]+sDate[[7 A 8]]
+      					CAS "AAAAMMJJ"
+      						sFile_Temp += sDate[[1 A 4]]+sDate[[5 A 6]]+sDate[[7 A 8]]
+      					CAS "MM"
+      						sFile_Temp += sDate[[5 A 6]]
+      					CAS "MMJJ"
+      						sFile_Temp += sDate[[5 A 6]]+sDate[[7 A 8]]
+      					CAS "JJ"
+      						sFile_Temp += sDate[[7 A 8]]
+      					CAS "#HOTE"
+      						sFile_Temp += NetNomMachine()
+      					AUTRE CAS
+      						ServiceEcritEvénementJournal("La Variable suivante <"+sChaine+"> du Masque du Chemin du Fichier LOG n'est pas conforme  : "+RC+RC+:GC_sPath_Mask, ejErreur)
+      						RENVOYER __ERROR
+      				FIN
+      				SI (eCpt+1) <= eTag_End_Nbre ALORS
+      					sFile_Temp += :GC_sPath_Mask[[(tTag_End[eCpt]+1) A (tTag_Start[(eCpt+1)]-1)]]
+      				FIN
+      			FIN
+      			sFile_Temp += ExtraitChaîne(:GC_sPath_Mask, 1, ">", DepuisFin)
+      			:GC_sPath = sFile_Temp		
+      		FIN
+      	FIN
+      FIN
+      
+      RENVOYER "__OK"
+      
+     type : 458752
+   -
+     name : User
+     procedure_id : 2281676065759297552
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] User ( [<sUser> est chaîne])
+      //
+      // Paramètres :
+      //	sUser (chaîne - valeur par défaut="#DEFAULT") : <indiquez ici le rôle de sUser>
+      // Valeur de retour :
+      // 	chaîne :  // 	Aucune
+      //// Exemple :
+      // Indiquez ici un exemple d'utilisation.
+      //
+      Procédure User(sUser est une chaine = "#DEFAULT")
+      
+      :GC_sUser = sUser
+      
+      RENVOYER :GC_sUser
+     type : 458752
+   -
+     name : Msg_Erreur
+     procedure_id : 2281676065759363088
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] Msg_Erreur (<sMsg> est chaîne)
+      //
+      // Paramètres :
+      //	sMsg (chaîne) : <indiquez ici le rôle de sMsg>
+      // Valeur de retour :
+      // 	variant :   // 	Aucune
+      //// Exemple :
+      // Indiquez ici un exemple d'utilisation.
+      //
+      Procédure Msg_Erreur(sMsg est une chaine)
+      
+      vCodeReturn est un variant = Null
+      
+      
+      vCodeReturn = :Msg_Log("__ERROR", sMsg)
+      
+      ServiceEcritEvénementJournal(sMsg, ejErreur)
+      
+      RENVOYER vCodeReturn
+     type : 458752
+   -
+     name : Msg_Info
+     procedure_id : 2281676065759428624
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] Msg_Info (<sMsg> est chaîne)
+      //
+      // Paramètres :
+      //	sMsg (chaîne) : <indiquez ici le rôle de sMsg>
+      // Valeur de retour :
+      // 	variant :   // 	Aucune
+      //// Exemple :
+      // Indiquez ici un exemple d'utilisation.
+      //
+      Procédure Msg_Info(sMsg est une chaine)
+      
+      vCodeReturn est un variant = Null
+      
+      
+      vCodeReturn = :Msg_Log("#INFO", sMsg)
+      
+      ServiceEcritEvénementJournal(sMsg, ejInformation)
+      
+      RENVOYER vCodeReturn
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : BgAAAAYAAAA6ih3UbgNXHwTtiPSFUEj+2fi/m7v4QV2rqidAupM=
+  original_name : CClasse1
+resources :
+ string_res :
+  identifier : 0x1e9a8f710018d558
+  internal_properties : BgAAAAYAAAAnMYFQ1bL/vz9ehh7L22SNNSlIzGTOI8h5F/WtgDNP
+custom_note :
+ internal_properties : BgAAAAYAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ
